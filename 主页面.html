@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>Dorm303 主页</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff, #66c4ff);
+    }
+
+    canvas#bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+
+    .orbit-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
+      z-index: 1;
+    }
+
+    .center-ball {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: url("logo.png") no-repeat center/cover;
+      box-shadow: 0 0 50px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.3);
+    }
+
+    .orbit-ball {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: "Arial", sans-serif;
+      font-weight: 900;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px #0ff, 0 0 16px #0ff, 0 0 24px rgba(0,255,255,0.5);
+      transform-style: preserve-3d;
+      animation: pulse 3s ease-in-out infinite, smoothColor 12s ease-in-out infinite;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      z-index: 2;
+    }
+
+    /* 小球呼吸效果 */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* 平滑颜色渐变 */
+    @keyframes smoothColor {
+      0% {
+        background: rgba(0, 255, 255, 0.7);
+        text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+      }
+      25% {
+        background: rgba(138, 43, 226, 0.7);
+        text-shadow: 0 0 12px #8a2be2, 0 0 24px #0ff;
+        box-shadow: 0 0 28px rgba(138, 43, 226, 0.6);
+      }
+      50% {
+        background: rgba(135, 247, 254, 0.8);
+        text-shadow: 0 0 10px #89f7fe, 0 0 20px #0ff;
+        box-shadow: 0 0 25px rgba(135, 247, 254, 0.5);
+      }
+      75% {
+        background: rgba(0, 200, 255, 0.75);
+        text-shadow: 0 0 12px #00c8ff, 0 0 24px #0ff;
+        box-shadow: 0 0 28px rgba(0, 200, 255, 0.6);
+      }
+      100% {
+        background: rgba(0, 255, 255, 0.7);
+        text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+      }
+    }
+
+    .orbit-ball:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.9), 0 0 50px rgba(0, 255, 255, 0.7);
+    }
+
+    /* hover 光圈效果 */
+    .orbit-ball:hover::after {
+      content: '';
+      position: absolute;
+      width: 220%;
+      height: 220%;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 30px 15px rgba(0, 255, 255, 0.5);
+      animation: haloPulse 1.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* 光圈脉动动画 */
+    @keyframes haloPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+  <div class="orbit-container">
+    <div class="center-ball"></div>
+    <a href="#" class="orbit-ball">程浩</a>
+    <a href="#" class="orbit-ball">刘昱凡</a>
+    <a href="#" class="orbit-ball">汪书航</a>
+    <a href="#" class="orbit-ball">陈皓南</a>
+    <a href="#" class="orbit-ball">曾张庆</a>
+    <a href="#" class="orbit-ball">李浩宁</a>
+  </div>
+
+  <script>
+    // === 星空背景 ===
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    let w, h;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const stars = Array.from({ length: 250 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      z: Math.random() * w
+    }));
+
+    function drawStars() {
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "white";
+      stars.forEach(star => {
+        star.z -= 2;
+        if (star.z <= 0) star.z = w;
+        const k = 128 / star.z;
+        const px = star.x * k + w / 2;
+        const py = star.y * k + h / 2;
+        if (px >= 0 && px <= w && py >= 0 && py <= h) {
+          const size = (1 - star.z / w) * 3;
+          ctx.beginPath();
+          ctx.arc(px, py, size, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      });
+      requestAnimationFrame(drawStars);
+    }
+
+    // 延迟背景渐变完成后显示星空
+    window.onload = () => {
+      setTimeout(() => {
+        canvas.style.opacity = 1;
+        drawStars();
+      }, 1500);
+    };
+
+    // === 小球动画 - 优化版本 ===
+    const balls = document.querySelectorAll(".orbit-ball");
+    const center = { 
+      x: window.innerWidth / 2, 
+      y: window.innerHeight / 2 
+    };
+
+    // 增加最大半径以扩大间距
+    const maxRadius = Math.min(window.innerWidth, window.innerHeight) * 0.45;
+
+    // 创建更复杂和动态的轨道参数，初始角度均匀分布
+    const orbits = Array.from(balls).map((_, i) => {
+      // 使用不同的基础半径，使小球间距离更大
+      const baseRadius = maxRadius;
+      
+      // 均匀分布初始角度（每个小球间隔60度）
+      const baseAngle = (i * 2 * Math.PI) / balls.length;
+      
+      return {
+        // 椭圆轨道参数 - 增加椭圆度避免重叠
+        radiusX: baseRadius * (0.9 + Math.random() * 0.2),
+        radiusY: baseRadius * (0.7 + Math.random() * 0.2),
+        
+        // 轨道速度 - 每个轴不同，创造更复杂运动
+        speedX: (0.0008 + Math.random() * 0.0008)*2,
+        speedY: (0.0006 + Math.random() * 0.001)*2,
+        
+        // 初始角度均匀分布
+        angleX: baseAngle,
+        angleY: baseAngle,
+        
+        // 减少随机扰动参数，使初始分布更均匀
+        perturbation: 0.01 + Math.random() * 0.02,
+        perturbationSpeed: 0.001 + Math.random() * 0.002,
+        perturbationAngle: Math.random() * Math.PI * 2,
+        
+        // 减少轨道偏移
+        offsetX: (Math.random() - 0.5) * 20,
+        offsetY: (Math.random() - 0.5) * 20
+      };
+    });
+
+    // 初始设置小球位置
+    function initializeBalls() {
+      balls.forEach((ball, i) => {
+        const o = orbits[i];
+        
+        // 计算基础椭圆位置
+        let x = Math.cos(o.angleX) * o.radiusX;
+        let y = Math.sin(o.angleY) * o.radiusY;
+        
+        // 添加固定偏移
+        x += o.offsetX;
+        y += o.offsetY;
+        
+        // 计算最终屏幕位置
+        const screenX = center.x + x;
+        const screenY = center.y + y;
+        
+        // 设置小球位置
+        ball.style.left = `${screenX}px`;
+        ball.style.top = `${screenY}px`;
+      });
+    }
+
+    function animateBalls() {
+      const time = Date.now() * 0.001;
+      
+      balls.forEach((ball, i) => {
+        const o = orbits[i];
+        
+        // 更新角度
+        o.angleX += o.speedX;
+        o.angleY += o.speedY;
+        
+        // 更新扰动角度
+        o.perturbationAngle += o.perturbationSpeed;
+        
+        // 计算基础椭圆位置
+        let x = Math.cos(o.angleX) * o.radiusX;
+        let y = Math.sin(o.angleY) * o.radiusY;
+        
+        // 添加随机扰动
+        const perturbation = Math.sin(o.perturbationAngle) * o.perturbation;
+        x += perturbation * o.radiusX;
+        y += perturbation * o.radiusY;
+        
+        // 添加固定偏移
+        x += o.offsetX;
+        y += o.offsetY;
+        
+        // 计算最终屏幕位置
+        const screenX = center.x + x;
+        const screenY = center.y + y;
+        
+        // 设置小球位置
+        ball.style.left = `${screenX}px`;
+        ball.style.top = `${screenY}px`;
+        
+        // 根据位置调整Z轴效果
+        const depth = (x / o.radiusX + y / o.radiusY) / 2;
+        const depthScale = 0.9 + depth * 0.2;
+        
+        ball.style.transform = `translate(-50%, -50%) scale(${depthScale})`;
+      });
+      
+      requestAnimationFrame(animateBalls);
+    }
+    
+    // 窗口调整大小时更新中心点和最大半径
+    window.addEventListener('resize', () => {
+      center.x = window.innerWidth / 2;
+      center.y = window.innerHeight / 2;
+      
+      // 更新轨道半径以适应新窗口大小
+      const newMaxRadius = Math.min(window.innerWidth, window.innerHeight) * 0.45;
+      orbits.forEach((orbit, i) => {
+        const ratio = orbit.radiusX / maxRadius;
+        orbit.radiusX = newMaxRadius * ratio;
+        orbit.radiusY = newMaxRadius * ratio * (orbit.radiusY / orbit.radiusX);
+      });
+      
+      // 重新初始化小球位置
+      initializeBalls();
+    });
+
+    // 初始化小球位置
+    initializeBalls();
+    animateBalls();
+  </script>
+</body>
+</html>

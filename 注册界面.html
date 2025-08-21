@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>注册界面</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        :root{
+            --primary:#66a6ff;
+            --primary-dark:#2F5DF2;
+            --card-bg: #F7FBFF;
+            --text:#333;
+        }
+        html,body{height:100%;margin:0;}
+        body {
+            font-family: "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            padding: 28px;
+        }
+
+        form {
+            width: 760px;
+            max-width: 98%;
+            background: linear-gradient(180deg, var(--card-bg), #eef6ff 60%);
+            padding: 26px 28px;
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(17, 42, 89, 0.14);
+            border: 1px solid rgba(102,166,255,0.10);
+            animation: cardIn 600ms cubic-bezier(.2,.9,.2,1);
+        }
+        @keyframes cardIn { from {opacity:0; transform:translateY(-10px)} to {opacity:1; transform:none} }
+
+        h3 {
+            font-size: 24px;
+            color: var(--primary-dark);
+            margin: 6px 0 18px 0;
+            text-align:center;
+            letter-spacing: 0.2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 12px 12px;
+            font-size: 15px;
+            color: #555;
+        }
+
+        td {
+            vertical-align: middle;
+            padding: 6px 6px;
+        }
+
+        /* 左侧标签：固定宽度并右对齐 */
+        .first {
+            width: 180px;
+            text-align: right;
+            padding-right: 16px;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* 输入框与下拉统一样式 */
+        input[type="text"],
+        input[type="password"],
+        select,
+        input.code {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 9px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(34,47,77,0.08);
+            background: white;
+            line-height: 1.4;
+            font-size: 14px;
+            transition: all 260ms cubic-bezier(.2,.9,.2,1);
+            outline: none;
+            box-shadow: 0 6px 18px rgba(102,166,255,0.04);
+        }
+
+        /* select 的高度（题目要求） */
+        select {
+            height: 40px;
+        }
+
+        /* .code 要求：宽度30%、行高35px（保留要求），在布局中以 inline-block 显示 */
+        .code {
+            width: 30%;
+            line-height: 35px;
+            padding: 8px 10px;
+            display: inline-block;
+            vertical-align: middle;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        /* 聚焦动画 */
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus,
+        .code:focus {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(102,166,255,0.14);
+            transform: translateY(-2px) scale(1.003);
+        }
+
+        /* 提交按钮 */
+        input[type="submit"] {
+            width: 100%;
+            line-height: 38px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 24px rgba(47,93,242,0.18);
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+        input[type="submit"]:hover{
+            transform: translateY(-3px);
+            box-shadow: 0 18px 36px rgba(47,93,242,0.22);
+        }
+
+        /* 按钮波纹 */
+        input[type="submit"]::after{
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.28);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width .6s ease, height .6s ease;
+            pointer-events:none;
+        }
+        input[type="submit"]:active::after{
+            width: 380px;
+            height: 380px;
+            transition: width .6s ease, height .6s ease;
+        }
+
+        /* 复选框和协议 */
+        input[type="checkbox"] {
+            transform: scale(1.02);
+            margin-right: 8px;
+            accent-color: var(--primary-dark);
+            vertical-align: middle;
+        }
+        .agreement {
+            font-size: 13px;
+            color: #444;
+            margin-top: 10px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+        .agreement a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .agreement a:hover{ text-decoration:underline; color:#233fdb }
+
+        ::placeholder { color: #b9c6da; font-size: 14px }
+
+        /* 小屏自适应：把左右单元堆叠 */
+        @media (max-width:640px){
+            form { padding: 18px; }
+            table { border-spacing: 8px 10px; }
+            .first { display:block; width:100%; text-align:left; padding-right:0; margin-bottom:6px; }
+            td { display:block; width:100%; }
+            .code { width: 48%; }
+            input[type="submit"] { margin-top:6px; }
+            .agreement { flex-direction: row; flex-wrap:wrap; gap:6px; }
+        }
+    </style>
+</head>
+
+<body>
+    <form action="javascript:alert('注册成功')">
+        <h3>请创建你的账号</h3>
+        <table>
+            <tr>
+                <td class="first">你的昵称</td>
+                <td><input type="text" name="name" placeholder="请输入你的昵称" required></td>
+            </tr>
+            <tr>
+                <td class="first">你的账号</td>
+                <td><input type="text" name="username" placeholder="最多10个字符" maxlength="10" required></td>
+            </tr>
+            <tr>
+                <td class="first">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</td>
+                <td><input type="password" name="password" placeholder="请输入9~16位密码" required></td>
+                <td class="first-empty" style="visibility:hidden"></td>
+            </tr>
+            <tr>
+                <td class="first">确认密码</td>
+                <td><input type="password" name="password2" placeholder="再次输入密码" required></td>
+            </tr>
+            <!-- 将 select 移到第二列，与其他输入对齐 -->
+            <tr>
+                <td class="first">真实姓名</td>
+                <td>
+                    <select required>
+                        <option>请选择</option>
+                        <option>程浩</option>
+                        <option>刘昱凡</option>
+                        <option>汪书航</option>
+                        <option>陈皓南</option>
+                        <option>曾张庆</option>
+                        <option>李浩宁</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="first">手&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;机</td>
+                <td><input type="text" name="phone" placeholder="留个联系电话（非必填）"></td>
+            </tr>
+            <tr>
+                <td class="first">邀请码</td>
+                <td>
+                    <!-- 邀请码保留 30% 宽度（按题目要求），并与输入对齐 -->
+                    <input placeholder="请输入邀请码" class="code" required>
+                </td>
+            </tr>
+            <tr>
+                <td class="first"></td>
+                <td>
+                    <input type="submit" value="确认无误，点击注册">
+                    <div class="agreement" style="margin-top:8px;">
+                        <input type="checkbox" id="agree" required>
+                        <label for="agree" style="font-size:13px; color:#444;">我已阅读并同意</label>
+                        <!-- 协议链接已补充为本地页面 terms.html（可替换为实际链接） -->
+                        <a href="注册协议.html" target="_blank" rel="noopener">《注册协议》</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+
+</html>

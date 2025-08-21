@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>《注册协议与隐私政策》 - 303宿舍风貌展示与信息共享网站</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        :root{
+            --primary:#66a6ff;
+            --primary-dark:#2F5DF2;
+            --card-bg:#F7FBFF;
+            --text:#222;
+        }
+
+        /* 与登录/注册页一致的全局背景与动画 */
+        html,body{
+            height:100%;
+            margin:0;
+            font-family:"Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:24px;
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            /* 与注册页/登录页一致的缓动、色相微动效果 */
+            animation: bgFade 12000ms ease-in-out infinite alternate;
+        }
+
+        @keyframes bgFade{
+            from{ filter: hue-rotate(0deg) saturate(1); transform: scale(1); }
+            to{ filter: hue-rotate(8deg) saturate(1.02); transform: scale(1.01); }
+        }
+
+        /* 卡片：与注册页风格保持一致 */
+        .card{
+            width: 900px;
+            max-width: 100%;
+            max-height: 86vh;
+            background: linear-gradient(180deg, var(--card-bg), #eef6ff 60%);
+            border-radius:14px;
+            box-shadow:0 20px 50px rgba(17,42,89,0.14);
+            border:1px solid rgba(102,166,255,0.10);
+            padding:20px;
+            box-sizing:border-box;
+            overflow:hidden;
+            animation:cardIn .6s cubic-bezier(.2,.9,.2,1);
+        }
+        @keyframes cardIn{ from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:none} }
+
+        header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+        header h1{font-size:20px;color:var(--primary-dark);margin:0;}
+        header .meta{font-size:13px;color:#577aa9}
+
+        .content{
+            overflow:auto;
+            padding-right:12px;
+            line-height:1.75;
+            color:var(--text);
+            font-size:14px;
+            background:transparent;
+        }
+
+        h2{font-size:16px;color:#123456;margin:18px 0 6px}
+        p{margin:8px 0}
+        ul{margin:8px 0 8px 20px}
+        ol{margin:8px 0 8px 20px}
+
+        .actions{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:12px}
+        .btn{
+            padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:600;
+            background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 10px 24px rgba(47,93,242,0.16);
+        }
+        .btn.secondary{background:transparent;color:var(--primary-dark);border:1px solid rgba(47,93,242,0.12);box-shadow:none}
+
+        .small-note{font-size:12px;color:#556f91;margin-right:auto}
+        a.inline{color:var(--primary-dark);text-decoration:none}
+        a.inline:hover{text-decoration:underline}
+
+        /* 可打印 */
+        @media print{ body{background:#fff} .card{box-shadow:none;border:none} }
+
+        /* 小屏适配 */
+        @media (max-width:720px){
+            .card{ padding:14px; max-height:92vh; }
+            .actions{ flex-direction:column; align-items:stretch; gap:8px; }
+            .small-note{ margin-bottom:8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card" role="document" aria-labelledby="title">
+        <header>
+            <h1 id="title">《注册协议与隐私政策》</h1>
+            <div class="meta">生效日期：2025年8月15日</div>
+        </header>
+
+        <div class="content" role="main">
+            <p><strong>欢迎使用“303宿舍风貌展示与信息共享网站”（下称“本网站”）！</strong> 为保障您和其他用户的权利，请在注册、发布内容或使用本网站服务之前，仔细阅读并理解本《注册协议与隐私政策》。本协议适用于所有使用本网站服务的个人或组织。</p>
+
+            <h2>一、服务内容与适用范围</h2>
+            <p>本网站为校园内303宿舍相关的风貌展示与信息共享平台，支持文字、图片、视频及评论等内容的发布、浏览与互动。适用范围包括但不限于：宿舍风貌展示、学习与生活经验分享、公告与活动信息、失物招领、室友交流等。</p>
+
+            <h2>二、用户资格与账号</h2>
+            <ol>
+                <li>注册用户应保证提供的信息真实、准确、完整，并及时更新。不得冒用他人身份信息注册账号。</li>
+                <li>用户应妥善保管账号密码，因用户保管不当导致的账号被盗用或信息泄露，网站不承担责任，但如有明显过错网站将配合处理。</li>
+                <li>如发现账号被他人未经授权使用，应及时通过页面提供的联系方式通知网站并配合核实处理。</li>
+            </ol>
+
+            <h2>三、用户发布内容规范（重点）</h2>
+            <p>用户在本网站发布或上传的内容（以下简称“用户内容”）须遵守以下要求：</p>
+            <ul>
+                <li>不得发布违反国家法律法规的信息、暴力/色情内容、煽动性言论或任何侵害他人合法权益的内容。</li>
+                <li>发布含有其他人的照片、视频或私人信息前，应取得当事人的明确同意。对室友、访客等涉及个人隐私的影像资料，务必征得被摄者许可。</li>
+                <li>不得发布含有个人敏感信息（如身份证号、银行卡号、密码、医疗记录等）的内容。</li>
+                <li>不得上传侵权作品（包含未获授权的音乐、影视、文章、摄影作品等），否则用户应自行承担因此产生的全部法律责任。</li>
+            </ul>
+
+            <h2>四、版权与许可</h2>
+            <ol>
+                <li>用户对其上传的原创内容保留著作权，但通过发布行为，用户授予本网站一项全球性、非独家、免版税的许可，用于存储、展示、传播、备份和推广该内容（包括为提供服务而进行的必要使用）。</li>
+                <li>若用户上传非原创内容，用户应确认其拥有相应权利或已取得权利人授权；否则，网站有权删除侵权内容并对违规用户采取相应措施。</li>
+            </ol>
+
+            <h2>五、个人信息与隐私保护</h2>
+            <p>我们重视用户隐私并采取合理的组织与技术措施保护个人信息安全。主要说明：</p>
+            <ul>
+                <li><strong>我们收集的信息：</strong>注册信息（昵称、账号、联系方式等）、发布的公开内容、设备与日志信息（如IP、浏览器类型、访问时间）等。</li>
+                <li><strong>信息用途：</strong>用于账号管理、内容展示、纠纷处理、统计分析、服务改进、必要的安全检测与违规处理。</li>
+                <li><strong>信息共享：</strong>未经用户同意，我们不会向无关第三方出售或分享用户的个人身份信息；在法律要求或为保障他人生命财产安全时，我们可能在法律允许范围内披露信息。</li>
+                <li><strong>第三方服务：</strong>为提供某些功能，网站可能使用第三方服务（如图像存储、CDN），这些服务提供者可能会接触到有限的用户内容或元数据。我们会选择有安全保障的服务商并与之签署必要的数据处理协议。</li>
+            </ul>
+
+            <h2>六、内容管理与社区规范</h2>
+            <p>网站保留对内容的审核、屏蔽、删除及对违规账号采取限制或封禁的权利。对以下行为，网站有权直接处理：</p>
+            <ul>
+                <li>发布违法或重大违禁内容；</li>
+                <li>多次发布骚扰、诈骗、虚假信息或垃圾信息；</li>
+                <li>未经同意恶意发布他人隐私或人身攻击；</li>
+                <li>其他违反本协议或破坏社区秩序的行为。</li>
+            </ul>
+
+            <h2>七、免责声明与责任限制</h2>
+            <p>在法律允许范围内：</p>
+            <ul>
+                <li>网站尽力维护服务的稳定与安全，但不保证服务不会被中断或无错误（如遇技术故障、第三方服务中断、不可抗力等）；</li>
+                <li>对于用户通过本网站相互交流产生的纠纷、线下交易或行为，网站不承担连带责任；但会在合理范围内协助调查与处理；</li>
+                <li>因用户违反本协议导致的任何第三方索赔或损失，责任由该用户承担；</li>
+            </ul>
+
+            <h2>八、协议的修改与终止</h2>
+            <p>网站可根据实际情况修改本协议条款。修改后将以合理方式告知用户并在页面公示。若用户在修订后继续使用服务，则视为接受修改。</p>
+
+            <h2>九、争议解决</h2>
+            <p>本协议适用中华人民共和国法律。如因本协议或使用本网站服务发生争议，双方应友好协商；协商不成的，提交网站所在地有管辖权的人民法院处理。</p>
+
+            <h2>十、特别提醒（关于303宿舍影像与隐私）</h2>
+            <p>由于本网站聚焦宿舍风貌展示，请特别注意：</p>
+            <ul>
+                <li>发布宿舍内照片或视频前，请获得室友或被拍摄人的明确同意；未经允许不得发布含有他人面部、私人空间或个人物品特写的内容。</li>
+                <li>如发现自己的隐私被未经授权发布，可通过页面联系方式举报，网站将在核实后快速处理。</li>
+            </ul>
+
+            <h2>十一、联系方式</h2>
+            <p>若您对本协议或隐私政策有疑问、需要删除或更正个人信息、申请内容下架或投诉，请通过以下方式联系我们：</p>
+            <p>
+                邮箱：<a href="mailto:support@303dorm.example" class="inline">support@303dorm.example</a><br>
+                站内反馈：在个人中心 → 帮助与反馈<br>
+                联系电话（可选）：（请根据实际填写）
+            </p>
+
+            <h2>十二、附则</h2>
+            <p>本协议构成本网站与用户之间关于使用本网站服务的完整协议。若本协议的某一条款被有权机构认定为无效或不可执行，不影响其他条款的效力。</p>
+
+            <p style="margin-top:12px;font-size:13px;color:#466a9a"><strong>温馨提示：</strong>在本网站展示内容时，请优先尊重他人的隐私与人格尊严；社区的良好氛围，靠每一位用户共同维护。感谢你的理解与配合！</p>
+        </div>
+
+        <div class="actions" role="navigation" aria-label="actions">
+            <div class="small-note">阅读完毕后请返回注册页完成注册</div>
+            <button class="btn secondary" onclick="window.history.back();return false;" title="返回注册页">返回注册页</button>
+            <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'});">回到顶部</button>
+        </div>
+    </div>
+</body>
+</html>

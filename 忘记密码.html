@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dorm303</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, #dbeafe, #93c5fd, #3b82f6);
+      font-family: "Microsoft YaHei", sans-serif;
+    }
+
+    .bubble {
+      width: 400px;   /* 气泡再放大一点 */
+      height: 400px;
+      background: radial-gradient(circle at 30% 30%, #ffffff55, #2563eb);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .bubble::before {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255,255,255,0.6), transparent 70%);
+      border-radius: 50%;
+      animation: lightmove 6s infinite ease-in-out;
+    }
+
+    @keyframes lightmove {
+      0% { transform: translate(-150px, -150px); }
+      50% { transform: translate(100px, 100px); }
+      100% { transform: translate(-150px, -150px); }
+    }
+
+    .text {
+      color: white;
+      font-size: 47px;   /* 文字超级大 */
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.2;
+      animation: zoomIn 2s ease-out forwards, blink 3s infinite 2s; 
+    }
+
+    @keyframes zoomIn {
+      0% { transform: scale(0.1); opacity: 0; }
+      60% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.75; transform: scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bubble">
+    <div class="text">请联系303宿舍的小唐人</div>
+  </div>
+</body>
+</html>
