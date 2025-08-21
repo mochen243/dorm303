@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>Dorm303 — 登录</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root{
+    --bg1:#89f7fe; --bg2:#66a6ff;
+    --card:#F0F8FF; --accent:#2F5DF2; --accent-2:#4b8bff;
+    --anim-total:1200ms; /* 总动画时长（跳转前） */
+  }
+  html,body{height:100%;margin:0;font-family:"Microsoft YaHei",system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(135deg,var(--bg1),var(--bg2));overflow:hidden;}
+  body { display:flex; align-items:center; justify-content:center; perspective:1200px; }
+  .link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    text-align:center;
+  }
+  /* card */
+  .card {
+    width:520px; max-width:94%;
+    background:linear-gradient(180deg,var(--card),#eef6ff 60%);
+    border-radius:18px;
+    box-shadow:0 30px 60px rgba(17,42,89,0.14);
+    padding:36px; box-sizing:border-box; position:relative; overflow:hidden;
+    transition: transform 450ms cubic-bezier(.2,.9,.2,1), opacity 350ms ease, filter 450ms ease;
+    will-change: transform, opacity, filter;
+  }
+
+  /* same inner layout as you provided */
+  .brand{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+  .logo-wrap{width:86px;height:86px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(47,93,242,0.14);overflow:hidden}
+  .brand-text .title{
+    font-size:22px;
+    font-weight:900;
+    background:linear-gradient(90deg,#233fdb,#66a6ff);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent
+  }
+  .brand-text .sub{margin-top:6px;font-size:12px;color:#27406f;font-weight:600;opacity:.95}
+  h3{margin:6px 0 10px 0;color:#333;font-size:16px}
+
+  .form-row{margin:12px 0;display:flex;justify-content:center}
+  input[type="text"], input[type="password"]{
+    width:88%; padding:12px 14px;border-radius:10px;border:1px solid rgba(34,47,77,0.08);font-size:15px;outline:none;
+  }
+  .prefs{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-top:6px}
+  .submit-row{margin-top:14px;position:relative}
+  #submitBtn{
+    width:100%; padding:12px;border-radius:12px;border:none;font-size:16px;font-weight:700;color:#fff;
+    background:linear-gradient(90deg,var(--accent-2),var(--accent)); cursor:pointer; box-shadow:0 14px 34px rgba(47,93,242,0.18);
+    position:relative; overflow:hidden;
+  }
+
+  /* overlay ripple (expanding) */
+  .ripple {
+    position: fixed; left:0; top:0; width:36px; height:36px; border-radius:50%;
+    pointer-events:none; transform:translate(-50%,-50%) scale(0);
+    z-index:9998;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.5), rgba(255,255,255,0.05)), linear-gradient(135deg, rgba(102,166,255,0.95), rgba(47,93,242,0.95));
+    box-shadow: 0 0 120px rgba(47,93,242,0.45), inset 0 0 60px rgba(255,255,255,0.08);
+    transition: transform var(--anim-total) cubic-bezier(.2,.9,.2,1), opacity 220ms linear;
+    will-change: transform, opacity;
+  }
+  .ripple.play { transform: translate(-50%,-50%) scale(80); opacity: 1; }
+
+  /* particle canvas sits above bg but below overlay to allow nice layering */
+  canvas#particles {
+    position: fixed; left:0; top:0; width:100%; height:100%; z-index:9997; pointer-events:none;
+  }
+
+  /* card shock / vanish classes */
+  .card.shock {
+    transform: rotateX(12deg) scale(1.04);
+    filter: contrast(1.08) saturate(1.05);
+  }
+  .card.vanish {
+    opacity:0; transform: scale(.92) translateY(-30px);
+    filter: blur(8px) saturate(.8);
+  }
+
+  /* loading ring */
+  .loading-wrap {
+    position: fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.9);
+    z-index:10000; pointer-events:none; opacity:0; transition:opacity 200ms ease;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .loading-wrap.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .loading {
+    width:96px; height:96px; border-radius:50%;
+    display:flex;align-items:center;justify-content:center; position:relative;
+    background: conic-gradient(rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    box-shadow:0 0 30px rgba(255,255,255,0.06), inset 0 0 20px rgba(0,255,255,0.06);
+  }
+  .loading::after {
+    content:""; position:absolute; width:64px; height:64px; border-radius:50%;
+    border:4px solid rgba(255,255,255,0.06); border-top-color: #8ee8ff;
+    animation: spin 900ms linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* flash before redirect */
+  .flash {
+    position: fixed; left:0; top:0; width:100%; height:100%; background:white; opacity:0; z-index:10005;
+    transition:opacity 220ms ease;
+    pointer-events:none;
+  }
+  .flash.show { opacity:1; }
+
+  /* small responsive */
+  @media (max-width:560px){
+    .card{width:92%;padding:22px}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ripple overlay -->
+  <div id="ripple" class="ripple" aria-hidden="true"></div>
+
+  <!-- particle canvas -->
+  <canvas id="particles"></canvas>
+
+  <!-- loading ring -->
+  <div id="loadingWrap" class="loading-wrap" aria-hidden="true">
+    <div class="loading" aria-hidden="true"></div>
+  </div>
+
+  <!-- flash -->
+  <div id="flash" class="flash" aria-hidden="true"></div>
+
+  <!-- original form/card (structure unchanged) -->
+  <form id="loginForm" action="主页面.html" method="get">
+    <div class="card" id="card" role="region" aria-label="Dorm303 登录">
+      <div class="brand" aria-hidden="false">
+        <span class="logo-wrap" aria-hidden="true">
+          <!-- same SVG logo -->
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dorm303 标志">
+            <defs>
+              <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#66a6ff"/>
+                <stop offset="100%" stop-color="#2F5DF2"/>
+              </linearGradient>
+              <radialGradient id="rg1" cx="30%" cy="30%" r="80%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.32)"/>
+                <stop offset="45%" stop-color="rgba(255,255,255,0.08)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </radialGradient>
+              <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#2f5df2" flood-opacity="0.12"/>
+              </filter>
+            </defs>
+            <g filter="url(#shadow)"><circle cx="60" cy="60" r="56" fill="url(#lg1)"/></g>
+            <path d="M20 60 a40 40 0 0 1 80 0 a40 40 0 0 1 -80 0" fill="url(#rg1)" opacity="0.55"/>
+            <circle cx="60" cy="60" r="44" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+            <g font-family="'Segoe UI', 'Microsoft YaHei', Arial, sans-serif" text-anchor="middle">
+              <text x="60" y="71" font-size="44" font-weight="900" fill="#FFFFFF">WUT</text>
+            </g>
+          </svg>
+        </span>
+        <div class="brand-text">
+          <div class="title">Dorm303</div>
+          <div class="sub">303宿舍风貌展示与信息共享平台</div>
+        </div>
+      </div>
+
+      <h3>用户登录</h3>
+      <div class="form-row"><input type="text" name="username" placeholder="账号" required></div>
+      <div class="form-row"><input type="password" name="password" placeholder="密码" required></div>
+      <div class="prefs">
+        <div class="left"><input type="checkbox" id="pass" name="type" value="pass"><label for="pass">记住密码</label></div>
+        <div class="right"><a href="忘记密码.html" style="font-size:14px">忘记密码？</a></div>
+      </div>
+
+      <div class="submit-row">
+        <input type="submit" id="submitBtn" value="登录">
+      </div>
+
+      <div class="links"><a href="注册界面.html">没有账号？立即注册</a></div>
+    </div>
+  </form>
+
+<script>
+(function(){
+  const form = document.getElementById('loginForm');
+  const btn = document.getElementById('submitBtn');
+  const ripple = document.getElementById('ripple');
+  const particlesCanvas = document.getElementById('particles');
+  const ctx = particlesCanvas.getContext('2d');
+  const card = document.getElementById('card');
+  const loadingWrap = document.getElementById('loadingWrap');
+  const flash = document.getElementById('flash');
+
+  // timing
+  const TOTAL_MS = 1200; // must match --anim-total roughly
+  const PARTICLE_COUNT = 90; // number of particles for burst (adjust for intensity)
+  const PARTICLE_LIFETIME = 900; // ms
+
+  // resize canvas
+  function resize() {
+    particlesCanvas.width = window.innerWidth;
+    particlesCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // particle system
+  let particles = [];
+  function spawnParticles(x, y) {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 8;
+      const size = 3 + Math.random() * 6;
+      const hue = 180 + Math.random() * 120; // cyan to purple
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - (Math.random() * 1.5),
+        life: PARTICLE_LIFETIME,
+        size,
+        hue,
+        decay: 0.96 - Math.random() * 0.02
+      });
+    }
+  }
+
+  // animate particles
+  let lastTs = performance.now();
+  function updateParticles(ts) {
+    const dt = ts - lastTs; lastTs = ts;
+    ctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+
+    for (let p of particles) {
+      p.life -= dt;
+      if (p.life <= 0) continue;
+      // physics
+      p.vy += 0.02 * (dt / 16); // gravity small
+      p.vx *= p.decay;
+      p.vy *= p.decay;
+      p.x += p.vx * (dt / 16);
+      p.y += p.vy * (dt / 16);
+
+      // draw
+      const alpha = Math.max(0, p.life / PARTICLE_LIFETIME);
+      ctx.beginPath();
+      ctx.fillStyle = `hsla(${p.hue},85%,60%,${alpha})`;
+      ctx.arc(p.x, p.y, p.size * (0.6 + (1 - alpha)*0.6), 0, Math.PI*2);
+      ctx.fill();
+      // glow
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(255,255,255,${alpha*0.06})`;
+      ctx.arc(p.x, p.y, p.size * 3 * alpha, 0, Math.PI*2);
+      ctx.fill();
+    }
+    // keep loop if particles alive
+    if (particles.some(p => p.life > 0)) requestAnimationFrame(updateParticles);
+  }
+
+  // play ripple at x,y
+  function playRippleAt(x, y) {
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    ripple.classList.remove('play');
+    // force reflow
+    void ripple.offsetWidth;
+    ripple.classList.add('play');
+    // fade out overlay opacity after big scale to avoid lingering
+    setTimeout(() => ripple.style.opacity = '0', TOTAL_MS - 80);
+    setTimeout(() => {
+      ripple.classList.remove('play');
+      ripple.style.opacity = '';
+    }, TOTAL_MS + 100);
+  }
+
+  // disable form controls
+  function disableForm() {
+    Array.from(form.elements).forEach(el => el.disabled = true);
+  }
+
+  // main submit handler
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (form.dataset.busy === '1') return;
+    form.dataset.busy = '1';
+
+    // compute button center (viewport coords)
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    // play ripple & spawn particles
+    playRippleAt(cx, cy);
+    spawnParticles(cx, cy);
+    lastTs = performance.now();
+    requestAnimationFrame(updateParticles);
+
+    // card shock then vanish
+    card.classList.add('shock');
+    setTimeout(() => {
+      card.classList.add('vanish');
+    }, 220);
+
+    // show loading ring after small delay
+    setTimeout(() => {
+      loadingWrap.classList.add('show');
+    }, 300);
+
+    // dim background hue and slightly zoom in for drama
+    document.body.style.transition = 'transform 550ms ease, filter 650ms ease';
+    document.body.style.transform = 'scale(1.02)';
+    document.body.style.filter = 'hue-rotate(25deg) saturate(1.05)';
+
+    // disable controls
+    disableForm();
+
+    // final flash and redirect after TOTAL_MS
+    setTimeout(() => {
+      flash.classList.add('show');
+    }, TOTAL_MS - 160);
+
+    setTimeout(() => {
+      const action = form.getAttribute('action') || '主页面.html';
+      // final redirect
+      window.location.href = action;
+    }, TOTAL_MS + 80);
+  });
+
+})();
+</script>
+</body>
+</html>
