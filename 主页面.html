@@ -34,12 +34,26 @@
       z-index: 1;
     }
 
+    /* 中间大球现在不再放最上层（z-index: 1） */
     .center-ball {
+      display: block;
       width: 300px;
       height: 300px;
       border-radius: 50%;
       background: url("logo.png") no-repeat center/cover;
       box-shadow: 0 0 50px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.3);
+      z-index: 1;    /* 改为较低层级 */
+      cursor: pointer;
+      text-decoration: none;
+      outline: none;
+      transition: transform 260ms ease, box-shadow 260ms ease;
+    }
+    .center-ball:focus {
+      box-shadow: 0 0 70px rgba(0,255,255,0.85), inset 0 0 36px rgba(255,255,255,0.08);
+      transform: translateY(-4px) scale(1.01);
+    }
+    .center-ball:hover {
+      transform: translateY(-6px) scale(1.02);
     }
 
     .orbit-ball {
@@ -62,7 +76,7 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
       text-decoration: none;
-      z-index: 2;
+      z-index: 3; /* 小球层级提高，覆盖中间球 */
     }
 
     /* 小球呼吸效果 */
@@ -130,7 +144,9 @@
 <body>
   <canvas id="bg"></canvas>
   <div class="orbit-container">
-    <div class="center-ball"></div>
+    <!-- 中间大球（现在层级较低） -->
+    <a href="主页面.html" class="center-ball" aria-label="进入主页面"></a>
+
     <a href="#" class="orbit-ball">程浩</a>
     <a href="#" class="orbit-ball">刘昱凡</a>
     <a href="#" class="orbit-ball">汪书航</a>
@@ -193,59 +209,35 @@
       y: window.innerHeight / 2 
     };
 
-    // 增加最大半径以扩大间距
     const maxRadius = Math.min(window.innerWidth, window.innerHeight) * 0.45;
 
-    // 创建更复杂和动态的轨道参数，初始角度均匀分布
     const orbits = Array.from(balls).map((_, i) => {
-      // 使用不同的基础半径，使小球间距离更大
       const baseRadius = maxRadius;
-      
-      // 均匀分布初始角度（每个小球间隔60度）
       const baseAngle = (i * 2 * Math.PI) / balls.length;
-      
       return {
-        // 椭圆轨道参数 - 增加椭圆度避免重叠
         radiusX: baseRadius * (0.9 + Math.random() * 0.2),
         radiusY: baseRadius * (0.7 + Math.random() * 0.2),
-        
-        // 轨道速度 - 每个轴不同，创造更复杂运动
         speedX: (0.0008 + Math.random() * 0.0008)*2,
         speedY: (0.0006 + Math.random() * 0.001)*2,
-        
-        // 初始角度均匀分布
         angleX: baseAngle,
         angleY: baseAngle,
-        
-        // 减少随机扰动参数，使初始分布更均匀
         perturbation: 0.01 + Math.random() * 0.02,
         perturbationSpeed: 0.001 + Math.random() * 0.002,
         perturbationAngle: Math.random() * Math.PI * 2,
-        
-        // 减少轨道偏移
         offsetX: (Math.random() - 0.5) * 20,
         offsetY: (Math.random() - 0.5) * 20
       };
     });
 
-    // 初始设置小球位置
     function initializeBalls() {
       balls.forEach((ball, i) => {
         const o = orbits[i];
-        
-        // 计算基础椭圆位置
         let x = Math.cos(o.angleX) * o.radiusX;
         let y = Math.sin(o.angleY) * o.radiusY;
-        
-        // 添加固定偏移
         x += o.offsetX;
         y += o.offsetY;
-        
-        // 计算最终屏幕位置
         const screenX = center.x + x;
         const screenY = center.y + y;
-        
-        // 设置小球位置
         ball.style.left = `${screenX}px`;
         ball.style.top = `${screenY}px`;
       });
@@ -253,66 +245,41 @@
 
     function animateBalls() {
       const time = Date.now() * 0.001;
-      
       balls.forEach((ball, i) => {
         const o = orbits[i];
-        
-        // 更新角度
         o.angleX += o.speedX;
         o.angleY += o.speedY;
-        
-        // 更新扰动角度
         o.perturbationAngle += o.perturbationSpeed;
-        
-        // 计算基础椭圆位置
         let x = Math.cos(o.angleX) * o.radiusX;
         let y = Math.sin(o.angleY) * o.radiusY;
-        
-        // 添加随机扰动
         const perturbation = Math.sin(o.perturbationAngle) * o.perturbation;
         x += perturbation * o.radiusX;
         y += perturbation * o.radiusY;
-        
-        // 添加固定偏移
         x += o.offsetX;
         y += o.offsetY;
-        
-        // 计算最终屏幕位置
         const screenX = center.x + x;
         const screenY = center.y + y;
-        
-        // 设置小球位置
         ball.style.left = `${screenX}px`;
         ball.style.top = `${screenY}px`;
-        
-        // 根据位置调整Z轴效果
         const depth = (x / o.radiusX + y / o.radiusY) / 2;
         const depthScale = 0.9 + depth * 0.2;
-        
         ball.style.transform = `translate(-50%, -50%) scale(${depthScale})`;
       });
-      
       requestAnimationFrame(animateBalls);
     }
     
-    // 窗口调整大小时更新中心点和最大半径
     window.addEventListener('resize', () => {
       center.x = window.innerWidth / 2;
       center.y = window.innerHeight / 2;
-      
-      // 更新轨道半径以适应新窗口大小
       const newMaxRadius = Math.min(window.innerWidth, window.innerHeight) * 0.45;
       orbits.forEach((orbit, i) => {
         const ratio = orbit.radiusX / maxRadius;
         orbit.radiusX = newMaxRadius * ratio;
         orbit.radiusY = newMaxRadius * ratio * (orbit.radiusY / orbit.radiusX);
       });
-      
-      // 重新初始化小球位置
       initializeBalls();
     });
 
-    // 初始化小球位置
     initializeBalls();
     animateBalls();
   </script>
