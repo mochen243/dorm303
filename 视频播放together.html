@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>炫酷视频播放器</title>
+  <style>
+    /* 页面整体样式 */
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1e3c72, #2a5298, #6dd5ed);
+      font-family: "Microsoft YaHei", sans-serif;
+    }
+
+    /* 外层容器 */
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      max-width: 960px;
+      width: 90%;
+      text-align: center;
+      animation: fadeIn 1.2s ease;
+    }
+
+    /* 标题 */
+    h1 {
+      color: #fff;
+      font-size: 28px;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    /* 视频播放器 */
+    video {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+    }
+
+    /* 提示文本 */
+    p {
+      margin-top: 15px;
+      color: #eee;
+      font-size: 14px;
+    }
+
+    /* 淡入动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 控制条样式（部分浏览器支持） */
+    video::-webkit-media-controls-panel {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    video::-webkit-media-controls-play-button,
+    video::-webkit-media-controls-volume-slider {
+      filter: invert(1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>最美宿舍</h1>
+    <video controls autoplay>
+      <source src="images\fulls\Video_1749444656177.mp4" type="video/mp4">
+      <source src="images\fulls\Video_1749444656177.mp4" type="video/webm">
+      抱歉，你的浏览器不支持 HTML5 视频播放。
+    </video>
+  </div>
+</body>
+</html>
