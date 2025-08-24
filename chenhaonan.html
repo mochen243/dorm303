@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>跳转中…</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- fallback meta refresh -->
+  <meta id="meta-refresh" http-equiv="refresh" content="2;url=https://mochen243.github.io/chn">
+  <style>
+    :root{--bg-a:#e6f9ff; --bg-b:#dff6ff; --a1:#60a5fa; --a2:#38bdf8; --a3:#7dd3fc; --dark:#05263b}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-a),var(--bg-b));font-family:Inter,system-ui,Arial;color:var(--dark);overflow:hidden}
+
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(600px 300px at 15% 20%, rgba(96,165,250,0.12),transparent 12%),radial-gradient(500px 260px at 85% 80%, rgba(61,198,255,0.08),transparent 12%);mix-blend-mode:screen;pointer-events:none;z-index:0}
+    body::after{content:'';position:fixed;inset:0;background:linear-gradient(120deg, rgba(255,255,255,0.08), rgba(255,255,255,0));opacity:0.9;filter:blur(10px);pointer-events:none;z-index:1;animation:shiftBG 12s linear infinite}
+    @keyframes shiftBG{0%{transform:translate3d(0,0,0)}50%{transform:translate3d(-4%,2%,0)}100%{transform:translate3d(0,0,0)}}
+
+    .wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:2}
+    .stage{width:420px;height:420px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d}
+
+    .core{width:220px;height:220px;border-radius:50%;background:conic-gradient(from 0deg,var(--a2),var(--a1),var(--a3));position:relative;box-shadow:0 40px 90px rgba(56,189,248,0.12),0 8px 30px rgba(20,60,100,0.12);transform-origin:center;animation:coreSpin 3s linear infinite,corePulse 1.6s ease-in-out infinite}
+    @keyframes coreSpin{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
+    @keyframes corePulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+    .ring{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen}
+    .ring.r1{width:360px;height:360px;border:3px solid rgba(96,165,250,0.12);transform:rotateX(50deg);animation:rot1 10s linear infinite}
+    .ring.r2{width:300px;height:300px;border:2px dashed rgba(61,198,255,0.09);transform:rotateX(20deg);animation:rot2 8s linear reverse infinite}
+    .ring.r3{width:440px;height:440px;border:1px dotted rgba(124,205,255,0.06);transform:rotateX(70deg);animation:rot3 16s linear infinite}
+    @keyframes rot1{from{transform:rotateX(50deg) rotateZ(0deg)}to{transform:rotateX(50deg) rotateZ(360deg)}}
+    @keyframes rot2{from{transform:rotateX(20deg) rotateZ(0deg)}to{transform:rotateX(20deg) rotateZ(-360deg)}}
+    @keyframes rot3{from{transform:rotateX(70deg) rotateZ(0deg)}to{transform:rotateX(70deg) rotateZ(360deg)}}
+
+    .beam{position:absolute;width:8px;height:220px;left:50%;top:50%;transform-origin:50% 100%;background:linear-gradient(180deg,rgba(255,255,255,0.9),transparent);opacity:0.08;border-radius:6px;mix-blend-mode:screen}
+    .beam.b1{transform:translate(-50%,-50%) rotate(20deg);animation:beamPulse 1.8s ease-in-out infinite}
+    .beam.b2{transform:translate(-50%,-50%) rotate(-40deg);animation:beamPulse 2.2s ease-in-out infinite}
+    @keyframes beamPulse{0%{opacity:0.02}50%{opacity:0.22}100%{opacity:0.02}}
+
+    .flare{position:absolute;inset:0;pointer-events:none}
+    .flare svg{width:100%;height:100%}
+
+    .spark{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,white,#7dd3fc);filter:blur(0.8px);mix-blend-mode:screen}
+    .stripe{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(120deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 6px);mask-image:radial-gradient(farthest-side, transparent 60%, black 100%);opacity:0.6}
+
+    /* 新增：中心全息徽章 */
+    .centerpiece{position:absolute;width:220px;height:220px;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.86);pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;filter:blur(6px);animation:cpEnter 0.95s cubic-bezier(.2,.9,.2,1) forwards}
+    @keyframes cpEnter{0%{opacity:0;transform:translate(-50%,-50%) scale(0.66);filter:blur(18px)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.06);filter:blur(3px)}100%{opacity:1;transform:translate(-50%,-50%) scale(1);filter:blur(0px)}}
+
+    .glow-ring{position:absolute;inset:-20px;border-radius:50%;filter:blur(18px);background:radial-gradient(circle at 30% 30%, rgba(125,211,252,0.95), transparent 28%);mix-blend-mode:screen;opacity:0;animation:glowIn 1.2s ease-out 0.08s forwards}
+    @keyframes glowIn{0%{opacity:0;transform:scale(0.84)}50%{opacity:0.9;transform:scale(1.04)}100%{opacity:0.95;transform:scale(1)}}
+
+    .holo{width:160px;height:160px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
+    .shard{transform-origin:50% 50%;opacity:0.98}
+    .hex-base{filter:drop-shadow(0 24px 40px rgba(56,189,248,0.14));opacity:0.22}
+
+    /* 加强碎片动画强度与脉动 */
+    .shard.spin1{animation:spinA 2.4s linear infinite}
+    .shard.spin2{animation:spinB 3.6s linear reverse infinite}
+    .shard.spin3{animation:spinC 4.2s linear infinite}
+    @keyframes spinA{0%{transform:rotate(0deg) scale(0.96)}50%{transform:rotate(180deg) scale(1.06)}100%{transform:rotate(360deg) scale(0.96)}}
+    @keyframes spinB{0%{transform:rotate(0deg) scale(1.02)}50%{transform:rotate(-180deg) scale(0.94)}100%{transform:rotate(-360deg) scale(1.02)}}
+    @keyframes spinC{0%{transform:rotate(0deg) scale(1)}50%{transform:rotate(180deg) scale(1.08)}100%{transform:rotate(360deg) scale(1)}}
+
+    .depth-shadow{position:absolute;inset:18px;border-radius:50%;box-shadow:inset 0 -30px 48px rgba(5,38,59,0.08)}
+
+    /* 中心额外脉冲圈 */
+    .pulse-outer{position:absolute;inset:-36px;border-radius:50%;box-shadow:0 0 0 rgba(56,189,248,0.14);animation:pulseOuter 1.6s ease-in-out infinite}
+    @keyframes pulseOuter{0%{transform:scale(0.86);box-shadow:0 0 0 rgba(56,189,248,0.12)}50%{transform:scale(1.08);box-shadow:0 0 60px rgba(56,189,248,0.14)}100%{transform:scale(0.86);box-shadow:0 0 0 rgba(56,189,248,0.12)}}
+
+    .sr{position:absolute;left:-9999px}
+
+    @media (max-width:520px){.stage{width:300px;height:300px}.core{width:160px;height:160px}.centerpiece{width:180px;height:180px}.holo{width:130px;height:130px}}
+  </style>
+</head>
+<body>
+  <div class="wrap" aria-hidden="true">
+    <div class="stage" id="stage">
+      <div class="core" id="core"></div>
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+
+      <!-- 中间新增全息徽章（现在有更长的入场与更强的光效） -->
+      <div class="centerpiece" id="centerpiece">
+        <div class="glow-ring"></div>
+        <div class="pulse-outer"></div>
+        <div class="holo" id="holo">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="lg" x1="0%" x2="100%"><stop offset="0%" stop-color="#bfefff" stop-opacity="0.98"/><stop offset="100%" stop-color="#50c7ff" stop-opacity="0.9"/></linearGradient>
+              <filter id="f1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/></filter>
+            </defs>
+            <polygon class="hex-base" points="100,20 160,50 160,120 100,150 40,120 40,50" fill="url(#lg)" stroke="rgba(255,255,255,0.38)" stroke-width="0.9"/>
+
+            <g id="shardsA" class="shard spin1" transform="translate(100 100)">
+              <polygon points="0,-48 18,-8 -18,-8" fill="#ffffff" opacity="0.24"/>
+              <polygon points="0,48 18,8 -18,8" fill="#7dd3fc" opacity="0.18"/>
+            </g>
+            <g id="shardsB" class="shard spin2" transform="translate(100 100)">
+              <polygon points="-48,0 -8,18 -8,-18" fill="#60a5fa" opacity="0.18"/>
+              <polygon points="48,0 8,18 8,-18" fill="#38bdf8" opacity="0.18"/>
+            </g>
+
+            <circle cx="100" cy="100" r="18" fill="#ffffff" opacity="1"/>
+            <circle cx="100" cy="100" r="34" fill="#7dd3fc" opacity="0.18"/>
+            <circle cx="100" cy="100" r="54" fill="#38bdf8" opacity="0.08" filter="url(#f1)"/>
+          </svg>
+        </div>
+        <div class="depth-shadow"></div>
+      </div>
+
+      <div class="beam b1"></div>
+      <div class="beam b2"></div>
+      <div class="flare" id="flare"></div>
+      <div class="stripe"></div>
+    </div>
+  </div>
+
+  <canvas id="particles" style="position:fixed;inset:0;z-index:3;pointer-events:none"></canvas>
+  <canvas id="trails" style="position:fixed;inset:0;z-index:4;pointer-events:none"></canvas>
+
+  <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:fixed;inset:0;z-index:2;pointer-events:none">
+    <defs>
+      <linearGradient id="rg" x1="0%" x2="100%"><stop offset="0%" stop-color="#7dd3fc" stop-opacity="0.7"/><stop offset="100%" stop-color="#38bdf8" stop-opacity="0.12"/></linearGradient>
+    </defs>
+    <path d="M-10,70 C18,10 36,120 110,40" stroke="url(#rg)" stroke-width="0.8" fill="none" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.95;0.2;0.95" dur="2.2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-20,20 C40,40 60,-20 120,30" stroke="url(#rg)" stroke-width="0.6" fill="none" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.85;0.15;0.85" dur="2.8s" repeatCount="indefinite"/>
+    </path>
+  </svg>
+
+  <script>
+    const TARGET_URL = 'https://mochen243.github.io/chn/';
+    const TOTAL_MS = 2000;
+    document.getElementById('meta-refresh').setAttribute('content', Math.round(TOTAL_MS/1000) + ';url=' + TARGET_URL);
+
+    // ensure centerpiece entrance starts immediately & gets amplified during lifetime
+    (function(){const cp = document.getElementById('centerpiece'); cp.style.animationDelay = '0.04s';})();
+
+    // redirect finish with big burst
+    function finish(){createBurst(window.innerWidth/2, window.innerHeight/2, 260); intensifyHolo(); setTimeout(()=>{window.location.href = TARGET_URL}, 260);} 
+    setTimeout(finish, TOTAL_MS - 80);
+
+    // canvas setup
+    const cvs = document.getElementById('particles'); const ctx = cvs.getContext('2d');
+    const trailC = document.getElementById('trails'); const tctx = trailC.getContext('2d');
+    function resize(){cvs.width = trailC.width = innerWidth; cvs.height = trailC.height = innerHeight}
+    resize(); window.addEventListener('resize', resize);
+
+    // particle systems
+    const particles = []; const comets = [];
+    function spawnParticles(n,center,strength=1){for(let i=0;i<n;i++){const cx=(center&&center.x)||innerWidth/2; const cy=(center&&center.y)||innerHeight/2; particles.push({x:cx + (Math.random()-0.5)*260*strength,y:cy + (Math.random()-0.5)*160*strength,vx:(Math.random()-0.5)*2.6*strength,vy:(Math.random()-0.5)*2.0*strength,size:Math.random()*3+0.6,life:Math.random()*200+80,age:0,h:180+Math.random()*80,a:0.6+Math.random()*0.6})}}
+    function spawnComet(){const angle = Math.random()*Math.PI*2; const speed = 6+Math.random()*8; const x = innerWidth/2 + Math.cos(angle)*40; const y = innerHeight/2 + Math.sin(angle)*40; comets.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,trail:[],life:120+Math.random()*120})}
+
+    spawnParticles(420); for(let i=0;i<16;i++) spawnComet();
+
+    function createBurst(cx,cy,count){for(let i=0;i<count;i++){const ang = Math.random()*Math.PI*2; const sp = 3+Math.random()*16; particles.push({x:cx,y:cy,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,size:1+Math.random()*3,life:40+Math.random()*160,age:0,h:170+Math.random()*100,a:0.98})}}
+
+    // intensify holo: temporary increase shard scale + flare + local particle rain
+    function intensifyHolo(){const holo = document.getElementById('holo'); holo.animate([{transform:'scale(1)'},{transform:'scale(1.18)'},{transform:'scale(1)'}],{duration:220,iterations:1,easing:'cubic-bezier(.2,.8,.2,1)'}); spawnParticles(120,{x:innerWidth/2,y:innerHeight/2},1.4); // super quick flare
+      // quick flash on glow
+      const g = document.querySelector('.glow-ring'); if(g){g.animate([{opacity:0.2, transform:'scale(0.9)'},{opacity:1, transform:'scale(1.18)'},{opacity:0.95, transform:'scale(1)'}],{duration:260,iterations:1})}
+    }
+
+    // ongoing small rhythmic holo pulses (synchronize with shards)
+    (function holoPulseLoop(){const holo = document.getElementById('holo'); setInterval(()=>{holo.animate([{transform:'scale(1)'},{transform:'scale(1.03)'},{transform:'scale(1)'}],{duration:800,iterations:1}) ; spawnParticles(8,{x:innerWidth/2,y:innerHeight/2},0.45)},520)})();
+
+    function update(){ tctx.fillStyle = 'rgba(230,249,255,0.12)'; tctx.fillRect(0,0,trailC.width,trailC.height); ctx.clearRect(0,0,cvs.width,cvs.height); ctx.globalCompositeOperation = 'lighter';
+      for(let i=particles.length-1;i>=0;i--){const p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.vx*=0.992; p.vy*=0.992; p.age++; const r=1 - p.age/p.life; if(r<=0){particles.splice(i,1); continue} ctx.beginPath(); ctx.fillStyle = `hsla(${p.h},90%,60%,${p.a*r})`; ctx.arc(p.x,p.y,p.size*(1+ (1-r)*1.8),0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${0.02*p.a})`; ctx.arc(p.x,p.y,p.size*6,0,Math.PI*2); ctx.fill(); }
+      for(let i=comets.length-1;i>=0;i--){const c=comets[i]; c.x+=c.vx; c.y+=c.vy; c.trail.push({x:c.x,y:c.y,alpha:1}); if(c.trail.length>34) c.trail.shift(); for(let j=0;j<c.trail.length;j++){const seg=c.trail[j]; const alpha = (j/c.trail.length)*0.9; tctx.beginPath(); tctx.fillStyle = `rgba(255,255,255,${alpha*0.06})`; tctx.arc(seg.x,seg.y,3+ (j/2),0,Math.PI*2); tctx.fill(); } ctx.beginPath(); ctx.fillStyle = 'white'; ctx.arc(c.x,c.y,3.6,0,Math.PI*2); ctx.fill(); c.life--; if(c.life<=0){comets.splice(i,1); if(Math.random()>0.12) spawnComet(); }}
+      if(Math.random()<0.08) spawnComet(); requestAnimationFrame(update);
+    }
+    update();
+
+    // rhythmic shard micro-rotations with eased motion
+    (function rhythmicShard(){const s1 = document.querySelector('#shardsA'); const s2 = document.querySelector('#shardsB'); let t=0; function f(){t+=0.035; const r1 = Math.sin(t)*12 + Math.sin(t*0.4)*6; const r2 = Math.cos(t*0.9)*14 + Math.cos(t*0.6)*4; s1.setAttribute('transform', `translate(100 100) rotate(${r1})`); s2.setAttribute('transform', `translate(100 100) rotate(${r2})`); requestAnimationFrame(f);} f();})();
+
+    // ensure entrance triggers a gentle particle rain focused on center (longer and shinier)
+    (function centerRain(){const center = {x:innerWidth/2,y:innerHeight/2}; let ticks=0; const id = setInterval(()=>{spawnParticles(12,center,0.6); ticks++; if(ticks>12) clearInterval(id)},120)} )();
+
+    // hidden aria
+    (function(){const s=document.createElement('div');s.className='sr';s.setAttribute('aria-live','polite');s.textContent='页面即将跳转';document.body.appendChild(s)})();
+  </script>
+</body>
+</html>
